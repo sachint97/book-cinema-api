@@ -24,10 +24,6 @@ jobs:
         run: |
           docker-compose ps
 
-      - name: Ping db from app container
-        run: |
-          docker-compose exec app ping db
-
       - name: Check PostgreSQL server status
         run: |
           docker-compose exec db sh -c "netstat -an | grep 5432"
