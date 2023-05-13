@@ -5,6 +5,7 @@ from django.contrib.auth.models import (
     BaseUserManager,
     PermissionsMixin
 )
+from utils.slug_generator import unique_slug_generator
 
 
 class UserManager(BaseUserManager):
@@ -30,6 +31,8 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser, PermissionsMixin):
     """User in the system."""
+    slug = models.SlugField(max_length=100,
+                            null=True, editable=False, unique=True)
     email = models.EmailField(max_length=255, unique=True)
     name = models.CharField(max_length=255)
     phone = models.CharField(max_length=20, null=True, blank=True)
@@ -49,3 +52,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        self.slug = unique_slug_generator(self, variable=self.name)
+        self.clean()
+        super().save(*args, **kwargs)

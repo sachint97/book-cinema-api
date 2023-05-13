@@ -19,6 +19,9 @@ services:
       - DB_NAME=devdb
       - DB_USER=devuser
       - DB_PASS=changeme
+      - ACCESS_TOKEN_LIFETIME_MINUTES=60
+      - REFRESH_TOKEN_LIFETIME_MINUTES=1440
+      - JWT_ALGORITHM=HS256
     depends_on:
       - db
 
