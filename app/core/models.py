@@ -209,8 +209,15 @@ class Fare(models.Model):
         SeatingClass, on_delete=models.CASCADE, related_name="fare"
     )
     price = models.DecimalField(max_digits=10, decimal_places=2,null=False, blank=False)
+    slug = models.SlugField(max_length=255, null=True, editable=False)
+
     def __str__(self):
         return f"{self.screen_show} {self.seating_class}-{self.price}Rs"
+
+    def save(self, *args, **kwargs):
+        self.slug = unique_slug_generator(self, variable=self)
+        self.clean()
+        super().save(*args, **kwargs)
 
 
 class Seat(models.Model):
@@ -220,10 +227,15 @@ class Seat(models.Model):
     row = models.IntegerField(null=False, blank=False)
     column = models.IntegerField(null=False, blank=False)
     is_available = models.BooleanField(default=True)
+    slug = models.SlugField(max_length=255, null=True, editable=False)
 
     def __str__(self):
         return f"{self.screen} {self.fare.seating_class}:Row-{self.row},Column-{self.column}"
 
+    def save(self, *args, **kwargs):
+        self.slug = unique_slug_generator(self, variable=self)
+        self.clean()
+        super().save(*args, **kwargs)
 
 class Booking(models.Model):
     """Storing booking information."""
@@ -232,10 +244,15 @@ class Booking(models.Model):
         ScreenShowMapper, on_delete=models.CASCADE, related_name="booking"
     )
     booking_date = models.DateField(auto_now_add=False, auto_now=False)
+    slug = models.SlugField(max_length=255, null=True, editable=False)
 
     def __str__(self):
         return f"{self.user} - {self.screen_show} - {self.booking_date}"
 
+    def save(self, *args, **kwargs):
+            self.slug = unique_slug_generator(self, variable=self)
+            self.clean()
+            super().save(*args, **kwargs)
 
 class BookingSeat(models.Model):
     """Storing seats selected for each booking."""
@@ -247,9 +264,15 @@ class BookingSeat(models.Model):
     )
     booking_status = models.BooleanField(default=False)
 
+    slug = models.SlugField(max_length=255, null=True, editable=False)
+
     def __str__(self):
         return f"{self.booking} - {self.seat}"
 
+    def save(self, *args, **kwargs):
+            self.slug = unique_slug_generator(self, variable=self)
+            self.clean()
+            super().save(*args, **kwargs)
 
 class Payment(models.Model):
     """Storing payment."""
@@ -268,10 +291,13 @@ class Payment(models.Model):
     coupon = models.CharField(null=True, blank=True, max_length=20)
     payment_status = models.BooleanField(default=False)
 
+    slug = models.SlugField(max_length=255, null=True, editable=False)
+
     def __str__(self):
         return f"{self.booking} {self.payment_method} {self.payment_status}"
 
     def save(self, *args, **kwargs):
+        self.slug = unique_slug_generator(self, variable=self)
         booking_seats = BookingSeat.objects.filter(booking=self.booking)
         total_amount = sum(
             [booking_seat.seat.fare.price for booking_seat in booking_seats]

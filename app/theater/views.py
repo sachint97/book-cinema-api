@@ -4,13 +4,14 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from core.models import *
-from .serializers import MoviesSerializer,ShowScreenSerializer,MediaSerializer,SeatSerializer,ScreenSerializer,ShowSerializer,AvailabeSeatsSerializer
+from .serializers import *
 from django.db.models import Q
+from rest_framework.permissions import AllowAny
 # Create your views here.
 
 class MoviesByCityView(APIView):
     """Display list of movies based on city."""
-
+    permission_classes= (AllowAny,)
     def get(self,request,city=None):
         queryset = Show.objects.filter(screen_show__screen__theater__city__slug=city)
         movies = Movie.objects.filter(show__in=queryset)
@@ -19,7 +20,7 @@ class MoviesByCityView(APIView):
 
 class ShowsByMovieView(APIView):
     """List of shows and screens based on movie , city or both."""
-
+    permission_classes= (AllowAny,)
     def get(self,request):
         movie = request.GET.get('movie')
         city = request.GET.get('city')
@@ -36,6 +37,7 @@ class ShowsByMovieView(APIView):
         return Response(serializer.data,status=status.HTTP_200_OK)
 
 class SeatingsByShowView(APIView):
+    permission_classes= (AllowAny,)
     def get(self,request,show=None):
         screen_show = ScreenShowMapper.objects.get(slug=show)
         if not screen_show:
@@ -60,12 +62,3 @@ class SeatingsByShowView(APIView):
         }
         return Response(response_data, status=status.HTTP_200_OK)
 
-class GetMedia(APIView):
-
-    def get(self,request,movie):
-        try:
-            queryset = Media.objects.filter(movie__slug=movie)
-            serializer = MediaSerializer(queryset,many=True)
-            return Response(serializer.data,status=status.HTTP_200_OK)
-        except Exception as e:
-            return Response({"error":str(e)},status=status.HTTP_400_BAD_REQUEST)

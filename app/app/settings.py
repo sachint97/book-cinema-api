@@ -47,7 +47,10 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
     # Internal apps.
-    'core'
+    'core',
+    'booking',
+    'theater',
+    'user'
 ]
 
 MIDDLEWARE = [
@@ -132,7 +135,6 @@ USE_TZ = True
 
 STATIC_URL = '/static/static/'
 STATIC_ROOT = '/vol/web/static'
-
 MEDIA_ROOT = '/vol/web/media'
 MEDIA_URL='/static/media/'
 
