@@ -46,7 +46,7 @@ Once the development server is running, you can access the project by visiting h
 
 ## API Reference
 ### User API's
-#### User signup.
+* #### User signup.
 
 ```http
   POST /api/user/create/
@@ -59,7 +59,7 @@ Once the development server is running, you can access the project by visiting h
 | `password` | `string` | **Required**. User password |
 | `confirm_password` | `string` | **Required**. Confirmation password |
 
-#### User login.
+* #### User login.
 
 ```http
   POST /api/user/login/
@@ -70,7 +70,7 @@ Once the development server is running, you can access the project by visiting h
 | `email`      | `string` | **Required**. User email address. |
 | `password`      | `string` | **Required**. User password. |
 
-#### User logout.
+* #### User logout.
 
 ```http
   POST /api/user/logout/ (requires authentication)
@@ -82,7 +82,7 @@ Once the development server is running, you can access the project by visiting h
 
 ### Theater API's
 
-#### List of movies playing in city.
+* #### List of movies playing in city.
 
 ```http
   GET /api/theater/movies/<str:city>/
@@ -126,7 +126,7 @@ Once the development server is running, you can access the project by visiting h
 
 </details>
 
-#### List shows of certain movie present in a city.
+* #### List of shows running certain movie in a city.
 
 ```http
   GET /api/theater/shows/?movie=movie&city=city
@@ -184,7 +184,7 @@ Once the development server is running, you can access the project by visiting h
   ```
 </details>
 
-#### Show available seats on a particular show running on a screen.
+* #### Show available seats on a particular show running on a screen.
 
 ```http
   POST /api/theater/seats-available/<str:show_screen_slug>/
@@ -257,7 +257,7 @@ Once the development server is running, you can access the project by visiting h
 
 ### Booking API's
 
-#### Booking seats for a show
+* #### Booking seats for a show
 
 ```http
   POST /api/booking/seat-booking/
@@ -289,7 +289,7 @@ Once the development server is running, you can access the project by visiting h
 </details>
 
 
-#### Payment for booking
+* #### Payment for booking
 
 ```http
   POST /api/booking/payment/
