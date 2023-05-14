@@ -316,18 +316,6 @@ Once the development server is running, you can access the project by visiting h
 
 
 
-
-
-
-## Environment Variables
-
-To run this project, you will need to add the following environment variables to your .env file
-
-`API_KEY`
-
-`ANOTHER_API_KEY`
-
-
 ## Running Tests
 
 To run tests, run the following command

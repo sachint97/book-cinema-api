@@ -23,6 +23,7 @@ services:
       - ACCESS_TOKEN_LIFETIME_MINUTES=360
       - REFRESH_TOKEN_LIFETIME_MINUTES=1440
       - JWT_ALGORITHM=HS256
+      - DJANGO_SECRET_KEY=django-insecure-8d+n0s5u))wm(k6mm8oj-=iq0!t)@b5h1^g$=(8!ucl72ewx(v
     depends_on:
       - db
 
