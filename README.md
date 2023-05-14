@@ -100,6 +100,31 @@ Once the development server is running, you can access the project by visiting h
 | `certificate`      | `string` | Movie certificate U,UA,A or R. |
 | `images`      | `list` | List of images url. |
 
+<details>
+  <summary>Show full response</summary>
+
+  ```bash
+  [
+    {
+        "title": "string",
+        "slug": "string",
+        "description": "string",
+        "duration": "time",
+        "release_date": "date",
+        "language": "string",
+        "certificate": "string",
+        "images": [
+            {
+                "image": "url",
+                "alt_text": "string",
+                "is_feature": boolean
+            }
+        ]
+    },
+]
+  ```
+
+</details>
 
 #### List shows of certain movie present in a city.
 
@@ -142,15 +167,15 @@ Once the development server is running, you can access the project by visiting h
               "slug": "string"
           },
           "screen": {
-              "name": "Screen 1",
-              "slug": "screen-1",
+              "name": "string",
+              "slug": "string",
               "theater": {
-                  "name": "PVR",
-                  "slug": "pvr",
-                  "address": "HSR layout",
+                  "name": "string",
+                  "slug": "string",
+                  "address": "string",
                   "city": {
-                      "slug": "bengaluru",
-                      "name": "Bengaluru"
+                      "slug": "string",
+                      "name": "string"
                   }
               }
           }
@@ -159,15 +184,135 @@ Once the development server is running, you can access the project by visiting h
   ```
 </details>
 
-#### User logout.
+#### Show available seats on a particular show running on a screen.
 
 ```http
-  POST /api/user/logout/ (requires authentication)
+  POST /api/theater/seats-available/<str:show_screen_slug>/
 ```
 
 | Parameter | Type     | Description                       |
 | :-------- | :------- | :-------------------------------- |
-| `refresh_token`      | `string` | **Required**. Pass refresh token to block and logout. |
+| `show`      | `object` | Object consist of movies and its timings. |
+| `screen`   | `object` | Objects consist of theater and its screen details. |
+| `seating_arrangment`   | `object` | Object consistof list of seats and its availability. |
+
+<details>
+  <summary>Show full resonse</summary>
+
+  ```bash
+   {
+    "show": {
+        "movie": {
+            "title": "string",
+            "slug": "string",
+            "description": "string",
+            "duration": "time",
+            "release_date": "date",
+            "language": "string",
+            "certificate": "string",
+            "images": [
+                {
+                    "image": "url",
+                    "alt_text": "string",
+                    "is_feature": boolean
+                },
+            ]
+        },
+        "start_date": "date",
+        "end_date": "date",
+        "start_time": "time",
+        "end_time": "time",
+        "slug": "string"
+    },
+    "screen": {
+        "name": "string",
+        "slug": "string",
+        "theater": {
+            "name": "string",
+            "slug": "string",
+            "address": "string",
+            "city": {
+                "slug": "string",
+                "name": "string"
+            }
+        }
+    }
+    "seating_arrangement": [
+        {
+          "seating_class": "Bolcany",
+          "price": 400.0,
+          "seats": [
+              {
+                  "row": 1,
+                  "column": 1,
+                  "is_available": true
+              },
+            ]
+        }
+      ]
+}
+```
+
+</details>
+
+### Booking API's
+
+#### Booking seats for a show
+
+```http
+  POST /api/booking/seat-booking/
+```
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `booking_date` | `Date` | Booking date. |
+| `screen_show`  | `string` | Screen and show slug. |
+| `seats`      | `object` | Object consisting of seat class , row and column. |
+
+<details>
+
+  <summary>Show full post data.</summary>
+
+  ```bash
+  {
+    "booking_date":"date",
+    "screen_show":"string",
+    "seats":[
+        {
+            "seating_class":"string",
+            "row":integer,
+            "column":integer
+        },
+    ]
+}
+  ```
+
+</details>
+
+
+#### Payment for booking
+
+```http
+  POST /api/booking/payment/
+```
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `booking` | `string` | Booking slug. |
+| `amount`  | `integer` | amount for booking. |
+| `payment_method`| `object` | Payment method UPI, Debit Card,and Credit card etc |
+
+<details>
+
+  <summary>Show full post data.</summary>
+
+  ```bash
+  {
+    "booking":"string",
+    "amount":integer,
+    "payment_method":"string"
+}
+  ```
+
+</details>
 
 
 
@@ -188,13 +333,12 @@ To run this project, you will need to add the following environment variables to
 To run tests, run the following command
 
 ```bash
-  npm run test
+  docker-compose run --rm app sh -c "python manage.py test"
 ```
 
 
 ## Tech Stack
 
-**Client:** React, Redux, TailwindCSS
+**Server:** Python, Django, Django-rest-framework
 
-**Server:** Node, Express
-
+**Database:** Postgresql
