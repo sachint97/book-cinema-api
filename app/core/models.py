@@ -32,7 +32,9 @@ class UserManager(BaseUserManager):
 class User(AbstractBaseUser, PermissionsMixin):
     """User in the system."""
 
-    slug = models.SlugField(max_length=100, null=True, editable=False, unique=True)
+    slug = models.SlugField(
+        max_length=100, null=True, editable=False, unique=True
+    )
     email = models.EmailField(max_length=255, unique=True)
     name = models.CharField(max_length=255)
     phone = models.CharField(max_length=20, null=True, blank=True)
@@ -100,7 +102,10 @@ class Movie(models.Model):
 
 class Media(models.Model):
     """Storing Media(images) for each movies"""
-    movie = models.ForeignKey(Movie, on_delete=models.PROTECT, related_name="media")
+
+    movie = models.ForeignKey(
+        Movie, on_delete=models.PROTECT, related_name="media"
+    )
     image = models.ImageField(null=True, blank=True)
     alt_text = models.CharField(max_length=255)
     is_feature = models.BooleanField(default=True)
@@ -113,10 +118,13 @@ class Media(models.Model):
 
 class Theater(models.Model):
     """Storing Theater deatails"""
+
     name = models.CharField(max_length=255, null=False, blank=False)
     slug = models.SlugField(max_length=255, null=True, editable=False)
     address = models.CharField(max_length=255, null=False, blank=False)
-    city = models.ForeignKey(City, related_name="theater", on_delete=models.CASCADE)
+    city = models.ForeignKey(
+        City, related_name="theater", on_delete=models.CASCADE
+    )
 
     def __str__(self):
         return str(self.name)
@@ -129,6 +137,7 @@ class Theater(models.Model):
 
 class Screen(models.Model):
     """Storing screen for each theater."""
+
     name = models.CharField(max_length=255, null=False, blank=False)
     slug = models.SlugField(max_length=255, null=True, editable=False)
     theater = models.ForeignKey(
@@ -146,7 +155,10 @@ class Screen(models.Model):
 
 class Show(models.Model):
     """Storing shows for each movies."""
-    movie = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name="show")
+
+    movie = models.ForeignKey(
+        Movie, on_delete=models.CASCADE, related_name="show"
+    )
     slug = slug = models.SlugField(max_length=255, null=True, editable=False)
     start_date = models.DateField(
         auto_now=False, auto_now_add=False, null=True, blank=True
@@ -169,12 +181,16 @@ class Show(models.Model):
         self.clean()
         super().save(*args, **kwargs)
 
+
 class ScreenShowMapper(models.Model):
     """Mapping screens with shows"""
+
     screen = models.ForeignKey(
         Screen, on_delete=models.CASCADE, related_name="screen_show"
     )
-    show = models.ForeignKey(Show, on_delete=models.CASCADE, related_name="screen_show")
+    show = models.ForeignKey(
+        Show, on_delete=models.CASCADE, related_name="screen_show"
+    )
     slug = slug = models.SlugField(max_length=255, null=True, editable=False)
 
     def __str__(self):
@@ -188,7 +204,10 @@ class ScreenShowMapper(models.Model):
 
 class SeatingClass(models.Model):
     """Storing seating class like Gold,Silver etc"""
-    name = models.CharField(max_length=50, null=False, blank=False, unique=True)
+
+    name = models.CharField(
+        max_length=50, null=False, blank=False, unique=True
+    )
     slug = models.SlugField(max_length=255, null=True, editable=False)
 
     def __str__(self):
@@ -202,13 +221,16 @@ class SeatingClass(models.Model):
 
 class Fare(models.Model):
     """storing fare details for each show,screen and seating class"""
+
     screen_show = models.ForeignKey(
         ScreenShowMapper, on_delete=models.CASCADE, related_name="fare"
     )
     seating_class = models.ForeignKey(
         SeatingClass, on_delete=models.CASCADE, related_name="fare"
     )
-    price = models.DecimalField(max_digits=10, decimal_places=2,null=False, blank=False)
+    price = models.DecimalField(
+        max_digits=10, decimal_places=2, null=False, blank=False
+    )
     slug = models.SlugField(max_length=255, null=True, editable=False)
 
     def __str__(self):
@@ -222,24 +244,34 @@ class Fare(models.Model):
 
 class Seat(models.Model):
     """Storing no_seats and its deatils for each screen."""
-    screen = models.ForeignKey(Screen, on_delete=models.CASCADE, related_name="seats")
-    fare = models.ForeignKey(Fare, on_delete=models.CASCADE, related_name="seats")
+
+    screen = models.ForeignKey(
+        Screen, on_delete=models.CASCADE, related_name="seats"
+    )
+    fare = models.ForeignKey(
+        Fare, on_delete=models.CASCADE, related_name="seats"
+    )
     row = models.IntegerField(null=False, blank=False)
     column = models.IntegerField(null=False, blank=False)
     is_available = models.BooleanField(default=True)
     slug = models.SlugField(max_length=255, null=True, editable=False)
 
     def __str__(self):
-        return f"{self.screen} {self.fare.seating_class}:Row-{self.row},Column-{self.column}"
+        return f"{self.screen} {self.fare.seating_class}: \
+                    Row-{self.row},Column-{self.column}"
 
     def save(self, *args, **kwargs):
         self.slug = unique_slug_generator(self, variable=self)
         self.clean()
         super().save(*args, **kwargs)
 
+
 class Booking(models.Model):
     """Storing booking information."""
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="booking")
+
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="booking"
+    )
     screen_show = models.ForeignKey(
         ScreenShowMapper, on_delete=models.CASCADE, related_name="booking"
     )
@@ -250,12 +282,14 @@ class Booking(models.Model):
         return f"{self.user} - {self.screen_show} - {self.booking_date}"
 
     def save(self, *args, **kwargs):
-            self.slug = unique_slug_generator(self, variable=self)
-            self.clean()
-            super().save(*args, **kwargs)
+        self.slug = unique_slug_generator(self, variable=self)
+        self.clean()
+        super().save(*args, **kwargs)
+
 
 class BookingSeat(models.Model):
     """Storing seats selected for each booking."""
+
     seat = models.ForeignKey(
         Seat, on_delete=models.CASCADE, related_name="booking_seat"
     )
@@ -270,12 +304,14 @@ class BookingSeat(models.Model):
         return f"{self.booking} - {self.seat}"
 
     def save(self, *args, **kwargs):
-            self.slug = unique_slug_generator(self, variable=self)
-            self.clean()
-            super().save(*args, **kwargs)
+        self.slug = unique_slug_generator(self, variable=self)
+        self.clean()
+        super().save(*args, **kwargs)
+
 
 class Payment(models.Model):
     """Storing payment."""
+
     pay_methods = (
         ("DEBIT CARD", "Debit card"),
         ("CREDIT CARD", "Credit card"),

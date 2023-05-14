@@ -132,7 +132,7 @@ class PublicaUserApiTest(TestCase):
                    "password": user_details["password"]}
         res = self.client.post(LOGIN_USER_URL, payload)
         headers = {
-        'HTTP_AUTHORIZATION': 'Bearer {}'.format(res.data['access_token'])
+            'HTTP_AUTHORIZATION': 'Bearer {}'.format(res.data['access_token'])
         }
         data = {'refresh_token': res.data['refresh_token']}
         response = self.client.post(LOGOUT_USER_URL, data=data, **headers)
@@ -149,9 +149,10 @@ class PublicaUserApiTest(TestCase):
         user = create_user(**user_details)
         self.client.force_authenticate(user=user)
         res = self.client.get(reverse(("user:profile"),
-                                kwargs={"query":"testname"}))
-        self.assertEqual(res.status_code,status.HTTP_200_OK)
-        self.assertIn("name",res.data)
-        self.assertIn("email",res.data)
-        self.assertIn("phone",res.data)
+                                      kwargs={"query": "testname"}))
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertIn("name", res.data)
+        self.assertIn("email", res.data)
+        self.assertIn("phone", res.data)
+
 

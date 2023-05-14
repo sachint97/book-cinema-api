@@ -1,22 +1,22 @@
-from django.shortcuts import render
-from core.models import Booking, BookingSeat, Payment, ScreenShowMapper, Seat
+"""Views for booking and paying movie tickets."""
+
+from core.models import Booking, BookingSeat, ScreenShowMapper, Seat
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
 from .serializers import BookingSerializer, PaymentSerializer
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.exceptions import ValidationError
 from django.db import transaction
-
-# Create your views here.
 
 
 class BookSeatsView(APIView):
+    """View to book show."""
+
     def post(self, request):
         user = request.user
         try:
             screen_show = ScreenShowMapper.objects.get(
-                slug=request.data["screen_show"])
+                slug=request.data["screen_show"]
+            )
         except ScreenShowMapper.DoesNotExist:
             return Response(
                 {"message": "Screen show does not exist."},
@@ -46,8 +46,9 @@ class BookSeatsView(APIView):
             booking_seats = []
             for seat in seats_list:
                 booking_seats.append(
-                    BookingSeat(seat=seat,
-                                booking=booking, booking_status=True)
+                    BookingSeat(
+                        seat=seat, booking=booking, booking_status=True
+                    )
                 )
             BookingSeat.objects.bulk_create(booking_seats)
             for index, booking_seat in enumerate(booking_seats):
@@ -56,21 +57,26 @@ class BookSeatsView(APIView):
             for seat in seats_list:
                 seat.is_available = False
                 seat.save()
-        return Response({"message": "Booking confirmed"},
-                         status=status.HTTP_200_OK)
+        return Response(
+            {"message": "Booking confirmed"}, status=status.HTTP_200_OK
+        )
 
 
 class PaymentView(APIView):
+    """Payment for booked show."""
+
     def post(self, request):
         try:
             booking = Booking.objects.get(slug=request.data["booking"])
-        except:
+        except Exception as e:
             return Response(
-                {"message": "Could not find booking details"},
+                {"message": "Could not find booking details",
+                 "error": str(e)},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         serializer = PaymentSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save(booking=booking, payment_status=True)
-        return Response({"message": "Payment successfull"},
-                         status=status.HTTP_200_OK)
+        return Response(
+            {"message": "Payment successfull"}, status=status.HTTP_200_OK
+        )

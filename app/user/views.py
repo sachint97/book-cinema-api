@@ -1,11 +1,15 @@
 """Views for user api"""
 
 from rest_framework.views import APIView
-from user.serializers import UserSerializer, LoginSerializer, UserProfileSerializer
+from user.serializers import (
+    UserSerializer,
+    LoginSerializer,
+    UserProfileSerializer,
+)
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
-# from rest_framework_simplejwt.views import TokenRefreshView
+
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model
 from app import settings
@@ -23,7 +27,7 @@ class CreateUserView(APIView):
         serializer.save()
         return Response(
             {"message": "User creation successful"},
-            status=status.HTTP_201_CREATED
+            status=status.HTTP_201_CREATED,
         )
 
 
@@ -48,31 +52,40 @@ class LoginUserView(APIView):
         }
         return Response(data, status=status.HTTP_200_OK)
 
+
 class LogoutView(APIView):
+    """View for logout user."""
+
     permission_classes = (IsAuthenticated,)
-    def post(self,request):
+
+    def post(self, request):
         try:
-            r_token=request.data['refresh_token']
+            r_token = request.data["refresh_token"]
             token = RefreshToken(r_token)
             token.blacklist()
             return Response(
                 {"message": "Logged out successfully."},
-                status=status.HTTP_200_OK)
+                status=status.HTTP_200_OK,
+            )
         except Exception as e:
             return Response(
-                {"message": "Logout operation failed.","error": str(e)},
-                status=status.HTTP_400_BAD_REQUEST)
+                {"message": "Logout operation failed.", "error": str(e)},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
 
 class UserProfile(APIView):
-    permission_classes = (IsAuthenticated,)
+    """View user profile."""
+    permission_classes = (IsAuthenticated, )
     serializer_class = UserProfileSerializer
-    def get(self,request,query=None):
+
+    def get(self, request, query=None):
         try:
             user = get_user_model().objects.get(slug=query)
             serializer = self.serializer_class(user)
-            return Response(serializer.data,status=status.HTTP_200_OK)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             return Response(
-                {"message": "User does not exist.","error": str(e)},
-                status=status.HTTP_400_BAD_REQUEST)
-
+                {"message": "User does not exist.", "error": str(e)},
+                status=status.HTTP_400_BAD_REQUEST,
+            )

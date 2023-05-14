@@ -11,7 +11,7 @@ This project is a Django web application that allows users to book movie tickets
 
 * User can sign up and login to application if they want to proceed to the booking.
 
-* User can select multiple seats and book tickets and proceed with the payment(payment gateway not integrated).
+* User can select multiple seats and book tickets and proceed to the payment(payment gateway not integrated).
 
 
 
@@ -138,7 +138,7 @@ Once the development server is running, you can access the project by visiting h
 | `screen`   | `object` | Objects consist of theater and its screen details. |
 
 <details>
-  <summary>Show full resonse</summary>
+  <summary>Show full response</summary>
 
   ```bash
   [
@@ -197,7 +197,7 @@ Once the development server is running, you can access the project by visiting h
 | `seating_arrangment`   | `object` | Object consistof list of seats and its availability. |
 
 <details>
-  <summary>Show full resonse</summary>
+  <summary>Show full response</summary>
 
   ```bash
    {
